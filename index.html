@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 데이터 출력</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        p {
+            margin: 10px 0;
+        }
+        b {
+            color: orange;
+        }
+        i {
+            color: yellowgreen;
+        }
+        h1,header,div {
+            width:400px; margin:auto;
+        }
+        header {
+            padding:10px 20px; margin:20px auto; border-radius:20px;background:#eee;
+            font-size:0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>API 데이터</h1>
+    <header>
+        <h4>식단에 표시된 번호</h4>
+        <p>
+            - 알레르기 유발 식재료 번호 : 1.난류, 2.우유, 3.메밀, 4.땅콩, 5.대두, 6.밀, 7.고등어, 8.게, 9.새우, 10.돼지고기, 11.복숭아, 12.토마토, 13.아황산류, 14.호두, 15.닭고기, 16.쇠고기, 17.오징어, 18.조개류(굴, 전복, 홍합 포함), 19.잣
+        </p>
+    </header>
+    <div id="result"></div>    
+    <script>
+        // DOM이 로드된 후 실행
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultDiv = document.getElementById('result');  // 결과를 출력할 div 요소
+            
+            // 데이터를 가져오는 함수
+            function fetchData() {
+                fetch('https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=T10&SD_SCHUL_CODE=9290083')  // API 요청
+                    .then(response => response.json())  // JSON 형식으로 응답을 변환
+                    .then(d => {
+                        const meal = d.mealServiceDietInfo[1]?.row;
+                        meal.forEach( item => {
+                            const p = document.createElement('p');
+                            p.innerHTML = `<b>${item.MLSV_YMD}_</b> ${item.SCHUL_NM}<br>
+                            <i>${item.MMEAL_SC_NM}</i><br>
+                            <span>${ item.DDISH_NM }</span>`;
+                            resultDiv.appendChild(p);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('데이터 가져오기 오류:', error);
+                        resultDiv.innerHTML = '데이터를 가져오는 데 오류가 발생했습니다.';
+                    });
+            }
+
+            // 데이터 가져오기 함수 호출
+            fetchData();
+        });
+    </script>
+</body>
+</html>
